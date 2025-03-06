@@ -84,7 +84,7 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Islamic Inheritance Calculator
         </h1>
-        <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md mb-24">
+        <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
           <form onSubmit={formAction} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
@@ -177,6 +177,17 @@ export default function Home() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="p-6 rounded-lg shadow-md">
+        <h1 className="text-3xl mb-2 font-bold text-gray-900">Note:</h1>
+        <p className="mb-12 text-gray-700">
+          Islamic inheritance law is based on the Quran and Sharia principles to ensure a fair distribution of wealth among heirs. Allah says in the Quran: <br />
+          <span className="font-bold text-gray-900">
+            "Allah commands you regarding your children: for the male, a share equal to that of two females. If there are only daughters, two or more, their share is two-thirds of the estate. If there is only one, her share is half..."
+          </span>
+          <span className="italic text-gray-600">(Surah An-Nisa 4:11)</span>
+        </p>
       </div>
       <Footer />
     </>
