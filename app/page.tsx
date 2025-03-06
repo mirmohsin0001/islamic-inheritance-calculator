@@ -184,7 +184,7 @@ export default function Home() {
         <p className="mb-12 text-gray-700">
           Islamic inheritance law is based on the Quran and Sharia principles to ensure a fair distribution of wealth among heirs. Allah says in the Quran: <br />
           <span className="font-bold text-gray-900">
-            "Allah commands you regarding your children: for the male, a share equal to that of two females. If there are only daughters, two or more, their share is two-thirds of the estate. If there is only one, her share is half..."
+            &quot;Allah commands you regarding your children: for the male, a share equal to that of two females. If there are only daughters, two or more, their share is two-thirds of the estate. If there is only one, her share is half...&quot;
           </span>
           <span className="italic text-gray-600">(Surah An-Nisa 4:11)</span>
         </p>
