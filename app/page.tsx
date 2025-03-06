@@ -51,7 +51,7 @@ async function calculateInheritance(prevState: State | null, formData: FormData)
     result: {
       sonShare: sonShare,
       daughterShare: daughterShare,
-    }
+    },
   };
 }
 
@@ -84,7 +84,7 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Islamic Inheritance Calculator
         </h1>
-        <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
+        <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md mb-24">
           <form onSubmit={formAction} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
@@ -169,10 +169,10 @@ export default function Home() {
             <div className="p-4 bg-green-100 rounded-md space-y-2">
               <h2 className="text-lg font-semibold text-green-800">Results:</h2>
               <p className="text-green-700">
-                Each Son's Share: {formatter.format(state.result.sonShare)}
+                Each Son&apos;s Share: {formatter.format(state.result.sonShare)}
               </p>
               <p className="text-green-700">
-                Each Daughter's Share: {formatter.format(state.result.daughterShare)}
+                Each Daughter&apos;s Share: {formatter.format(state.result.daughterShare)}
               </p>
             </div>
           )}
