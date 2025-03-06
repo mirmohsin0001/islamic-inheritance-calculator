@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useActionState } from 'react';
-import Footer from '@/app/components/Footer'
+import Footer from '@/app/components/Footer';
 
 // Create a formatter for Indian number system with Rupee symbol
 const formatter = new Intl.NumberFormat('en-IN', {
@@ -12,7 +11,20 @@ const formatter = new Intl.NumberFormat('en-IN', {
   maximumFractionDigits: 2,
 });
 
-async function calculateInheritance(prevState: any, formData: FormData) {
+// Define interfaces
+interface Result {
+  sonShare: number;
+  daughterShare: number;
+}
+
+interface State {
+  error?: string;
+  success?: boolean;
+  result?: Result;
+}
+
+// Action function expects FormData from the form
+async function calculateInheritance(prevState: State | null, formData: FormData): Promise<State> {
   const amount = parseFloat(formData.get('amount') as string);
   const sons = parseInt(formData.get('sons') as string) || 0;
   const daughters = parseInt(formData.get('daughters') as string) || 0;
@@ -29,7 +41,7 @@ async function calculateInheritance(prevState: any, formData: FormData) {
   }
 
   // Calculate shares
-  const totalShares = (sons * 2) + daughters;
+  const totalShares = sons * 2 + daughters;
   const shareValue = amount / totalShares;
   const sonShare = shareValue * 2;
   const daughterShare = shareValue;
@@ -49,7 +61,14 @@ export default function Home() {
     sons: '',
     daughters: '',
   });
-  const [state, formAction] = useActionState(calculateInheritance, null);
+  const [state, setState] = useState<State | null>(null);
+
+  const formAction = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const result = await calculateInheritance(state, formData);
+    setState(result);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,7 +85,7 @@ export default function Home() {
           Islamic Inheritance Calculator
         </h1>
         <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
-          <form action={formAction} className="space-y-6">
+          <form onSubmit={formAction} className="space-y-6">
             <div className="space-y-2">
               <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
                 Total Amount
