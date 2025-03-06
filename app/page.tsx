@@ -1,101 +1,165 @@
-import Image from "next/image";
+'use client';
+
+import { useState } from 'react';
+import { useActionState } from 'react';
+import Footer from '@/app/components/Footer'
+
+// Create a formatter for Indian number system with Rupee symbol
+const formatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+});
+
+async function calculateInheritance(prevState: any, formData: FormData) {
+  const amount = parseFloat(formData.get('amount') as string);
+  const sons = parseInt(formData.get('sons') as string) || 0;
+  const daughters = parseInt(formData.get('daughters') as string) || 0;
+
+  // Validation
+  if (!amount || amount <= 0) {
+    return { error: 'Please enter a valid positive amount' };
+  }
+  if (sons < 0 || daughters < 0) {
+    return { error: 'Number of sons and daughters cannot be negative' };
+  }
+  if (sons === 0 && daughters === 0) {
+    return { error: 'Please enter at least one son or daughter' };
+  }
+
+  // Calculate shares
+  const totalShares = (sons * 2) + daughters;
+  const shareValue = amount / totalShares;
+  const sonShare = shareValue * 2;
+  const daughterShare = shareValue;
+
+  return {
+    success: true,
+    result: {
+      sonShare: sonShare,
+      daughterShare: daughterShare,
+    }
+  };
+}
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [formData, setFormData] = useState({
+    amount: '',
+    sons: '',
+    daughters: '',
+  });
+  const [state, formAction] = useActionState(calculateInheritance, null);
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  return (
+    <>
+      <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-4">
+        <h1 className="text-3xl font-bold text-gray-900 mb-8">
+          Islamic Inheritance Calculator
+        </h1>
+        <div className="max-w-md w-full space-y-8 bg-white p-6 rounded-lg shadow-md">
+          <form action={formAction} className="space-y-6">
+            <div className="space-y-2">
+              <label htmlFor="amount" className="block text-sm font-medium text-gray-700">
+                Total Amount
+              </label>
+              <input
+                type="number"
+                name="amount"
+                id="amount"
+                step="any"
+                min="0"
+                value={formData.amount}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === '-' || e.key === 'e') {
+                    e.preventDefault();
+                  }
+                }}
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter total amount"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="sons" className="block text-sm font-medium text-gray-700">
+                Number of Sons
+              </label>
+              <input
+                type="number"
+                name="sons"
+                id="sons"
+                min="0"
+                value={formData.sons}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === '-' || e.key === 'e') {
+                    e.preventDefault();
+                  }
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter number of sons"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="daughters" className="block text-sm font-medium text-gray-700">
+                Number of Daughters
+              </label>
+              <input
+                type="number"
+                name="daughters"
+                id="daughters"
+                min="0"
+                value={formData.daughters}
+                onChange={handleInputChange}
+                onKeyDown={(e) => {
+                  if (e.key === '-' || e.key === 'e') {
+                    e.preventDefault();
+                  }
+                }}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Enter number of daughters"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Calculate
+            </button>
+          </form>
+
+          {state?.error && (
+            <div className="p-4 bg-red-100 text-red-700 rounded-md">
+              {state.error}
+            </div>
+          )}
+
+          {state?.success && state?.result && (
+            <div className="p-4 bg-green-100 rounded-md space-y-2">
+              <h2 className="text-lg font-semibold text-green-800">Results:</h2>
+              <p className="text-green-700">
+                Each Son's Share: {formatter.format(state.result.sonShare)}
+              </p>
+              <p className="text-green-700">
+                Each Daughter's Share: {formatter.format(state.result.daughterShare)}
+              </p>
+            </div>
+          )}
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }
